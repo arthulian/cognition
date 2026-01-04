@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Cognitive Capacities</title>
+    <meta name="description" content="Learn about the science and importance of cognitive capacities in personal and professional development.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.min.js"></script>
+    <link href="https://unpkg.com/splitting@1.0.6/dist/splitting.css" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        'amber': {
+                            400: '#f59e0b',
+                            500: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --accent: #f59e0b;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --accent: #fbbf24;
+            --card-bg: #1a1a1a;
+            --card-border: #333333;
+        }
+        
+        /* Force dark theme by default */
+        html {
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure all text has high contrast */
+        h1, h2, h3, h4, h5, h6, p, span, div {
+            color: var(--text-primary);
+        }
+        
+        /* Override Tailwind defaults for better contrast */
+        .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        .dark .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* High contrast borders */
+        .border-gray-200, .border-gray-300 {
+            border-color: var(--card-border) !important;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .theme-toggle {
+            background: var(--accent);
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .content-section {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .content-section.animate-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">CC</span>
+                    </div>
+                    <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link font-medium">Home</a>
+                    <a href="about.html" class="nav-link font-medium text-amber-500">About</a>
+                    <a href="explore.html" class="nav-link font-medium">Explore</a>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6" data-splitting>
+                Understanding Cognitive Capacities
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Cognitive capacities are the fundamental mental abilities that enable us to process information, 
+                make decisions, and navigate the complexities of modern life with wisdom and effectiveness.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        
+        <!-- What Are Cognitive Capacities -->
+        <section class="content-section mb-20">
+            <h2 class="font-display text-3xl font-bold mb-8">What Are Cognitive Capacities?</h2>
+            <div class="prose prose-lg dark:prose-invert max-w-none">
+                <p class="text-lg leading-relaxed mb-6">
+                    Cognitive capacities represent the fundamental mental abilities that underpin human intelligence, decision-making, and behavior. Unlike specific knowledge or skills, these capacities are meta-abilities that determine how effectively we process information, evaluate evidence, manage our emotions, and pursue our goals.
+                </p>
+                <p class="text-lg leading-relaxed mb-6">
+                    Think of cognitive capacities as the operating system of your mind. Just as a computer's OS determines how well it can run applications, your cognitive capacities determine how effectively you can learn, solve problems, make decisions, and achieve your objectives.
+                </p>
+                <p class="text-lg leading-relaxed">
+                    These capacities are not fixed traits—they can be developed, strengthened, and refined through deliberate practice and conscious attention. Understanding them is the first step toward mastering them.
+                </p>
+            </div>
+        </section>
+
+        <!-- The Science Behind -->
+        <section class="content-section mb-20">
+            <h2 class="font-display text-3xl font-bold mb-8">The Science Behind Cognitive Capacities</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-display text-xl font-semibold mb-4">Neuroscience Foundation</h3>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                        Modern neuroscience reveals that these cognitive capacities are supported by specific neural networks and brain regions. The prefrontal cortex, in particular, plays a crucial role in executive functions like self-regulation, critical thinking, and decision-making.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Neuroplasticity—the brain's ability to reorganize and form new neural connections—means that these capacities can be enhanced through practice and training.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-display text-xl font-semibold mb-4">Cognitive Psychology</h3>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                        Cognitive psychology research demonstrates that these capacities are distinct but interconnected. Improvements in one area often lead to benefits in others, creating positive feedback loops that enhance overall cognitive performance.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Studies show that individuals with well-developed cognitive capacities experience better outcomes in education, career, relationships, and overall life satisfaction.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why They Matter -->
+        <section class="content-section mb-20">
+            <h2 class="font-display text-3xl font-bold mb-8">Why Cognitive Capacities Matter</h2>
+            <div class="space-y-8">
+                <div class="flex items-start space-x-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display text-xl font-semibold mb-3">Enhanced Decision-Making</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            Well-developed cognitive capacities lead to better decisions by improving your ability to evaluate evidence, consider multiple perspectives, and resist cognitive biases. This translates to better outcomes in both personal and professional contexts.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display text-xl font-semibold mb-3">Improved Adaptability</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            In our rapidly changing world, the ability to adapt is crucial. Strong cognitive capacities enable you to learn quickly, adjust to new situations, and maintain effectiveness amid uncertainty and change.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display text-xl font-semibold mb-3">Better Relationships</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            Capacities like fairness, self-reflection, and self-regulation directly improve your ability to understand others, manage conflicts constructively, and build meaningful connections.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-display text-xl font-semibold mb-3">Personal Fulfillment</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            Developing these capacities leads to greater self-awareness, purpose, and satisfaction. They enable you to align your actions with your values and pursue meaningful goals with determination and wisdom.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How to Develop -->
+        <section class="content-section mb-20">
+            <h2 class="font-display text-3xl font-bold mb-8">Developing Your Cognitive Capacities</h2>
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-8 mb-8">
+                <h3 class="font-display text-xl font-semibold mb-4">The Development Process</h3>
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+                    Developing cognitive capacities is a lifelong journey that involves conscious attention, deliberate practice, and continuous reflection. Here are key principles to guide your development:
+                </p>
+                <ol class="list-decimal pl-5 space-y-3 text-gray-600 dark:text-gray-400">
+                    <li><strong>Awareness:</strong> Start by recognizing which capacities are most relevant to your current challenges</li>
+                    <li><strong>Assessment:</strong> Honestly evaluate your current level in each capacity</li>
+                    <li><strong>Practice:</strong> Create opportunities to exercise specific capacities in real-world situations</li>
+                    <li><strong>Reflection:</strong> Regularly review your progress and identify areas for improvement</li>
+                    <li><strong>Integration:</strong> Gradually weave these capacities into your daily habits and decision-making</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="content-section">
+            <h2 class="font-display text-3xl font-bold mb-8">Three Categories of Cognitive Capacities</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Self-Management</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Capacities that govern how you manage your own thoughts, emotions, and behaviors: Self-Regulation, Self-Reflection, Self-Efficacy, Self-Discipline, Temperance, and Perseverance.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Cognitive Processing</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Capacities that determine how you process and make sense of information: Sense-Making and Critical Thinking.
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16l3-3m-3 3l-3-3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-3">Decision-Making</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                        Capacities that influence how you make judgments and decisions: Objectivity and Fairness.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Call to Action -->
+    <section class="bg-amber-50 dark:bg-amber-900/20 py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="font-display text-3xl font-bold mb-6">Ready to Develop Your Cognitive Capacities?</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+                Start your journey of cognitive development by exploring each capacity in detail and discovering practical ways to enhance your mental capabilities.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html#skills" class="bg-amber-400 text-black px-8 py-4 rounded-lg font-semibold hover:bg-amber-500 transition-colors">
+                    Explore Skills
+                </a>
+                <a href="explore.html" class="border-2 border-amber-400 text-amber-400 px-8 py-4 rounded-lg font-semibold hover:bg-amber-400 hover:text-black transition-colors">
+                    Take Assessment
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold text-sm">CC</span>
+                </div>
+                <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+                © 2026 Cognitive Capacities. Empowering minds through understanding.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Management
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                this.applyTheme();
+                this.setupToggle();
+            }
+            
+            applyTheme() {
+                document.documentElement.setAttribute('data-theme', this.currentTheme);
+                document.body.setAttribute('data-theme', this.currentTheme);
+            }
+            
+            toggle() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', this.currentTheme);
+                this.applyTheme();
+                this.updateToggleIcon();
+            }
+            
+            updateToggleIcon() {
+                const toggle = document.getElementById('themeToggle');
+                const icon = toggle.querySelector('svg');
+                
+                if (this.currentTheme === 'dark') {
+                    icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+                } else {
+                    icon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
+                }
+            }
+            
+            setupToggle() {
+                const toggle = document.getElementById('themeToggle');
+                toggle.addEventListener('click', () => this.toggle());
+                this.updateToggleIcon();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeManager = new ThemeManager();
+            
+            // Initialize text splitting
+            Splitting();
+            
+            // Animate title
+            anime({
+                targets: '[data-splitting] .char',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                easing: 'easeOutExpo',
+                duration: 1200,
+                delay: anime.stagger(50)
+            });
+            
+            // Animate content sections on scroll
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.content-section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

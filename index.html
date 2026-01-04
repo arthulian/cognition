@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Capacities - Master Your Mind</title>
+    <meta name="description" content="Explore the ten essential cognitive capacities that drive human thinking, decision-making, and personal growth.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://unpkg.com/splitting@1.0.6/dist/splitting.css" rel="stylesheet">
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        'amber': {
+                            400: '#f59e0b',
+                            500: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --accent: #f59e0b;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --accent: #fbbf24;
+            --card-bg: #1a1a1a;
+            --card-border: #333333;
+        }
+        
+        /* Force dark theme by default */
+        html {
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure all text has high contrast */
+        h1, h2, h3, h4, h5, h6, p, span, div {
+            color: var(--text-primary);
+        }
+        
+        /* Override Tailwind defaults for better contrast */
+        .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        .dark .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* High contrast borders */
+        .border-gray-200, .border-gray-300 {
+            border-color: var(--card-border) !important;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.1);
+        }
+        
+        [data-theme="dark"] .card:hover {
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.2);
+        }
+        
+        .hero-bg {
+            background-image: url('./resources/hero-neural.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .skill-icon {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        .modal {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .theme-toggle {
+            background: var(--accent);
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(245, 158, 11, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 158, 11, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">CC</span>
+                    </div>
+                    <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link font-medium">Home</a>
+                    <a href="about.html" class="nav-link font-medium">About</a>
+                    <a href="explore.html" class="nav-link font-medium">Explore</a>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center hero-bg">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+            <h1 class="font-display text-5xl md:text-7xl font-bold text-white mb-6" data-splitting>
+                Master Your Mind
+            </h1>
+            <div class="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+                <span id="typed-text"></span>
+            </div>
+            <p class="text-lg text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Explore the ten essential cognitive capacities that drive human thinking, decision-making, and personal growth. 
+                Each skill is a gateway to understanding and enhancing your mental capabilities.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#skills" class="bg-amber-400 text-black px-8 py-4 rounded-lg font-semibold hover:bg-amber-500 transition-colors">
+                    Explore Skills
+                </a>
+                <a href="about.html" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-black transition-colors">
+                    Learn More
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Skills Grid Section -->
+    <section id="skills" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-6" data-splitting>
+                Ten Cognitive Capacities
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                Each capacity represents a fundamental aspect of human cognition. Click on any card to explore 
+                detailed insights and practical applications.
+            </p>
+        </div>
+
+        <!-- Skills Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6" id="skillsGrid">
+            <!-- Skills will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Skill Detail Modal -->
+    <div id="skillModal" class="fixed inset-0 z-50 hidden modal">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-center space-x-4">
+                            <img id="modalIcon" src="" alt="" class="skill-icon">
+                            <h3 id="modalTitle" class="font-display text-3xl font-bold"></h3>
+                        </div>
+                        <button id="closeModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modalContent" class="prose prose-lg dark:prose-invert max-w-none">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button id="prevSkill" class="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                            Previous
+                        </button>
+                        <button id="nextSkill" class="px-6 py-3 bg-amber-400 text-black rounded-lg hover:bg-amber-500 transition-colors">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold text-sm">CC</span>
+                </div>
+                <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+                © 2026 Cognitive Capacities. Empowering minds through understanding.
+            </p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

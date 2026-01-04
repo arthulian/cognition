@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - Cognitive Capacities</title>
+    <meta name="description" content="Interactive assessment and exploration tools for cognitive capacities development.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        'amber': {
+                            400: '#f59e0b',
+                            500: '#d97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --accent: #f59e0b;
+            --card-bg: #ffffff;
+            --card-border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e5e5;
+            --accent: #fbbf24;
+            --card-bg: #1a1a1a;
+            --card-border: #333333;
+        }
+        
+        /* Force dark theme by default */
+        html {
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        /* Ensure all text has high contrast */
+        h1, h2, h3, h4, h5, h6, p, span, div {
+            color: var(--text-primary);
+        }
+        
+        /* Override Tailwind defaults for better contrast */
+        .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        .dark .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        
+        /* High contrast borders */
+        .border-gray-200, .border-gray-300 {
+            border-color: var(--card-border) !important;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .theme-toggle {
+            background: var(--accent);
+            border: none;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .assessment-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .assessment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent) var(--progress, 0%), var(--card-border) var(--progress, 0%), var(--card-border) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .question-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+        }
+        
+        .option-button {
+            background-color: var(--card-bg);
+            border: 2px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .option-button:hover {
+            border-color: var(--accent);
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+        
+        .option-button.selected {
+            border-color: var(--accent);
+            background-color: var(--accent);
+            color: black;
+        }
+        
+        .radar-container {
+            height: 400px;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-sm">CC</span>
+                    </div>
+                    <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link font-medium">Home</a>
+                    <a href="about.html" class="nav-link font-medium">About</a>
+                    <a href="explore.html" class="nav-link font-medium text-amber-500">Explore</a>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="font-display text-5xl md:text-6xl font-bold mb-6">
+                Explore Your Cognitive Capacities
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Discover your strengths and development opportunities through interactive assessments 
+                and personalized insights into your cognitive capacities.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        
+        <!-- Assessment Tool -->
+        <section class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold mb-6">Interactive Assessment</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Answer questions about your typical behaviors and thought patterns to get a personalized profile 
+                    of your cognitive capacity strengths and development areas.
+                </p>
+            </div>
+
+            <!-- Assessment Interface -->
+            <div class="max-w-4xl mx-auto">
+                <!-- Start Screen -->
+                <div id="assessmentStart" class="assessment-card rounded-2xl p-8 text-center">
+                    <div class="w-20 h-20 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-2xl font-bold mb-4">Cognitive Capacities Assessment</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+                        This assessment will help you understand your current level of development across the ten cognitive capacities. 
+                        It takes about 10-15 minutes to complete and provides personalized insights.
+                    </p>
+                    <button id="startAssessment" class="bg-amber-400 text-black px-8 py-4 rounded-lg font-semibold hover:bg-amber-500 transition-colors">
+                        Start Assessment
+                    </button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="assessmentProgress" class="hidden mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium">Progress</span>
+                        <span id="progressText" class="text-sm font-medium">0 / 30</span>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div id="progressBar" class="progress-bar h-2 rounded-full" style="--progress: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div id="questionCard" class="hidden question-card rounded-2xl p-8">
+                    <div class="mb-6">
+                        <h3 id="questionText" class="font-display text-xl font-semibold mb-4"></h3>
+                        <p id="questionDescription" class="text-gray-600 dark:text-gray-400"></p>
+                    </div>
+                    
+                    <div id="optionsContainer" class="space-y-3 mb-8">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="prevQuestion" class="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Previous
+                        </button>
+                        <button id="nextQuestion" class="px-6 py-3 bg-amber-400 text-black rounded-lg hover:bg-amber-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Screen -->
+                <div id="assessmentResults" class="hidden">
+                    <div class="text-center mb-12">
+                        <h3 class="font-display text-3xl font-bold mb-4">Your Cognitive Profile</h3>
+                        <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                            Based on your responses, here's your personalized cognitive capacity profile. 
+                            Use these insights to focus your development efforts.
+                        </p>
+                    </div>
+
+                    <!-- Radar Chart -->
+                    <div class="assessment-card rounded-2xl p-8 mb-8">
+                        <h4 class="font-display text-xl font-semibold mb-6 text-center">Your Cognitive Capacities Overview</h4>
+                        <div id="radarChart" class="radar-container"></div>
+                    </div>
+
+                    <!-- Detailed Results -->
+                    <div id="detailedResults" class="space-y-6">
+                        <!-- Results will be populated by JavaScript -->
+                    </div>
+
+                    <div class="text-center mt-12">
+                        <button id="retakeAssessment" class="border-2 border-amber-400 text-amber-400 px-8 py-4 rounded-lg font-semibold hover:bg-amber-400 hover:text-black transition-colors mr-4">
+                            Retake Assessment
+                        </button>
+                        <a href="index.html#skills" class="bg-amber-400 text-black px-8 py-4 rounded-lg font-semibold hover:bg-amber-500 transition-colors">
+                            Explore Skills
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skill Relationship Visualization -->
+        <section class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold mb-6">How Capacities Connect</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Cognitive capacities don't exist in isolation—they work together, creating synergies that amplify your overall cognitive effectiveness.
+                </p>
+            </div>
+
+            <div class="assessment-card rounded-2xl p-8">
+                <div id="networkChart" style="height: 500px;"></div>
+            </div>
+        </section>
+
+        <!-- Development Resources -->
+        <section class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="font-display text-4xl font-bold mb-6">Development Resources</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Practical tools and exercises to strengthen your cognitive capacities.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="assessment-card rounded-xl p-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">Daily Reflection Journal</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                        Track your cognitive capacity development with guided daily prompts and exercises.
+                    </p>
+                    <button class="text-amber-500 font-medium text-sm hover:text-amber-600 transition-colors">
+                        Download Template →
+                    </button>
+                </div>
+
+                <div class="assessment-card rounded-xl p-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">Progress Tracking</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                        Monitor your cognitive capacity development over time with detailed analytics.
+                    </p>
+                    <button class="text-amber-500 font-medium text-sm hover:text-amber-600 transition-colors">
+                        View Dashboard →
+                    </button>
+                </div>
+
+                <div class="assessment-card rounded-xl p-6">
+                    <div class="w-12 h-12 bg-amber-400 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-lg font-semibold mb-2">Community Forum</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                        Connect with others on their cognitive development journey and share experiences.
+                    </p>
+                    <button class="text-amber-500 font-medium text-sm hover:text-amber-600 transition-colors">
+                        Join Discussion →
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold text-sm">CC</span>
+                </div>
+                <span class="font-display font-semibold text-xl">Cognitive Capacities</span>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+                © 2026 Cognitive Capacities. Empowering minds through understanding.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Assessment Data
+        const assessmentQuestions = [
+            {
+                id: 1,
+                capacity: 'self-regulation',
+                text: 'When facing a stressful situation, how do you typically respond?',
+                description: 'Consider your ability to maintain composure and think clearly under pressure.',
+                options: [
+                    { text: 'I become overwhelmed and struggle to think clearly', value: 1 },
+                    { text: 'I get stressed but can eventually calm myself', value: 2 },
+                    { text: 'I maintain reasonable composure most of the time', value: 3 },
+                    { text: 'I stay calm and can think strategically under pressure', value: 4 },
+                    { text: 'I thrive under pressure and perform at my best', value: 5 }
+                ]
+            },
+            {
+                id: 2,
+                capacity: 'sense-making',
+                text: 'How do you approach complex, unfamiliar problems?',
+                description: 'Think about your ability to understand and organize complex information.',
+                options: [
+                    { text: 'I feel overwhelmed and don\'t know where to start', value: 1 },
+                    { text: 'I try to find simple patterns but often miss important details', value: 2 },
+                    { text: 'I can usually break down complex problems into manageable parts', value: 3 },
+                    { text: 'I systematically analyze complex information and find connections', value: 4 },
+                    { text: 'I quickly see patterns and create clear mental models', value: 5 }
+                ]
+            },
+            {
+                id: 3,
+                capacity: 'critical-thinking',
+                text: 'When evaluating information or claims, what do you do?',
+                description: 'Consider how you assess the credibility and logic of information.',
+                options: [
+                    { text: 'I tend to believe information that supports my views', value: 1 },
+                    { text: 'I sometimes question information but don\'t dig deep', value: 2 },
+                    { text: 'I usually check sources and look for evidence', value: 3 },
+                    { text: 'I systematically evaluate sources, evidence, and logic', value: 4 },
+                    { text: 'I rigorously analyze claims from multiple angles', value: 5 }
+                ]
+            },
+            {
+                id: 4,
+                capacity: 'objectivity',
+                text: 'How do you handle situations where your beliefs are challenged?',
+                description: 'Think about your willingness to revise your views based on new evidence.',
+                options: [
+                    { text: 'I defend my beliefs and dismiss contradictory evidence', value: 1 },
+                    { text: 'I feel uncomfortable but might consider other perspectives', value: 2 },
+                    { text: 'I try to remain open to different viewpoints', value: 3 },
+                    { text: 'I actively seek out evidence that might contradict my beliefs', value: 4 },
+                    { text: 'I readily update my beliefs based on compelling evidence', value: 5 }
+                ]
+            },
+            {
+                id: 5,
+                capacity: 'fairness',
+                text: 'When making decisions that affect others, how do you proceed?',
+                description: 'Consider your ability to balance multiple perspectives impartially.',
+                options: [
+                    { text: 'I primarily consider my own interests and perspective', value: 1 },
+                    { text: 'I try to be fair but often favor people I like', value: 2 },
+                    { text: 'I consider others\' viewpoints but sometimes struggle with bias', value: 3 },
+                    { text: 'I actively seek multiple perspectives and try to be impartial', value: 4 },
+                    { text: 'I consistently apply objective criteria regardless of personal preferences', value: 5 }
+                ]
+            },
+            {
+                id: 6,
+                capacity: 'self-reflection',
+                text: 'How often do you reflect on your own thoughts, feelings, and behaviors?',
+                description: 'Think about your tendency to examine your own patterns and motivations.',
+                options: [
+                    { text: 'I rarely think about why I do what I do', value: 1 },
+                    { text: 'I sometimes think about my behavior but not deeply', value: 2 },
+                    { text: 'I regularly reflect on my actions and their consequences', value: 3 },
+                    { text: 'I systematically analyze my patterns and seek to understand them', value: 4 },
+                    { text: 'I constantly examine my motivations and actively work to improve', value: 5 }
+                ]
+            },
+            {
+                id: 7,
+                capacity: 'self-efficacy',
+                text: 'How confident are you in your ability to learn new skills and overcome challenges?',
+                description: 'Consider your belief in your own capabilities based on past experiences.',
+                options: [
+                    { text: 'I doubt my ability to handle new challenges', value: 1 },
+                    { text: 'I have some confidence but often feel uncertain', value: 2 },
+                    { text: 'I generally believe I can learn and adapt', value: 3 },
+                    { text: 'I\'m confident in my ability to develop new capabilities', value: 4 },
+                    { text: 'I strongly believe I can master any challenge I commit to', value: 5 }
+                ]
+            },
+            {
+                id: 8,
+                capacity: 'self-discipline',
+                text: 'How well do you stick to long-term goals when faced with immediate temptations?',
+                description: 'Think about your ability to prioritize important goals over immediate gratification.',
+                options: [
+                    { text: 'I easily get distracted by immediate pleasures', value: 1 },
+                    { text: 'I struggle to maintain focus on long-term goals', value: 2 },
+                    { text: 'I can usually stay on track with some effort', value: 3 },
+                    { text: 'I consistently prioritize important goals over temptations', value: 4 },
+                    { text: 'I automatically align my actions with my long-term objectives', value: 5 }
+                ]
+            },
+            {
+                id: 9,
+                capacity: 'temperance',
+                text: 'How do you allocate your time and energy across different priorities?',
+                description: 'Consider your ability to focus on what matters most and avoid overcommitment.',
+                options: [
+                    { text: 'I often waste time on low-priority activities', value: 1 },
+                    { text: 'I try to focus on important things but get pulled in many directions', value: 2 },
+                    { text: 'I generally allocate resources reasonably well', value: 3 },
+                    { text: 'I strategically prioritize based on importance and impact', value: 4 },
+                    { text: 'I optimally allocate resources and minimize decision fatigue', value: 5 }
+                ]
+            },
+            {
+                id: 10,
+                capacity: 'perseverance',
+                text: 'How do you respond to significant obstacles or setbacks?',
+                description: 'Think about your tendency to persist through difficulties toward valued goals.',
+                options: [
+                    { text: 'I usually give up when things get too difficult', value: 1 },
+                    { text: 'I persist for a while but eventually lose motivation', value: 2 },
+                    { text: 'I generally keep going unless the obstacle seems insurmountable', value: 3 },
+                    { text: 'I persist through most challenges if the goal is important', value: 4 },
+                    { text: 'I consistently overcome obstacles to achieve my valued goals', value: 5 }
+                ]
+            }
+        ];
+
+        // Assessment State
+        let currentQuestion = 0;
+        let answers = {};
+        let assessmentStarted = false;
+
+        // Capacity Names
+        const capacityNames = {
+            'self-regulation': 'Self-Regulation',
+            'sense-making': 'Sense-Making',
+            'critical-thinking': 'Critical Thinking',
+            'objectivity': 'Objectivity',
+            'fairness': 'Fairness',
+            'self-reflection': 'Self-Reflection',
+            'self-efficacy': 'Self-Efficacy',
+            'self-discipline': 'Self-Discipline',
+            'temperance': 'Temperance',
+            'perseverance': 'Perseverance'
+        };
+
+        // Theme Management
+        class ThemeManager {
+            constructor() {
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                this.applyTheme();
+                this.setupToggle();
+            }
+            
+            applyTheme() {
+                document.documentElement.setAttribute('data-theme', this.currentTheme);
+                document.body.setAttribute('data-theme', this.currentTheme);
+            }
+            
+            toggle() {
+                this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', this.currentTheme);
+                this.applyTheme();
+                this.updateToggleIcon();
+            }
+            
+            updateToggleIcon() {
+                const toggle = document.getElementById('themeToggle');
+                const icon = toggle.querySelector('svg');
+                
+                if (this.currentTheme === 'dark') {
+                    icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+                } else {
+                    icon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
+                }
+            }
+            
+            setupToggle() {
+                const toggle = document.getElementById('themeToggle');
+                toggle.addEventListener('click', () => this.toggle());
+                this.updateToggleIcon();
+            }
+        }
+
+        // Assessment Manager
+        class AssessmentManager {
+            constructor() {
+                this.setupEventListeners();
+            }
+            
+            startAssessment() {
+                assessmentStarted = true;
+                currentQuestion = 0;
+                answers = {};
+                
+                document.getElementById('assessmentStart').classList.add('hidden');
+                document.getElementById('assessmentProgress').classList.remove('hidden');
+                document.getElementById('questionCard').classList.remove('hidden');
+                
+                this.showQuestion();
+            }
+            
+            showQuestion() {
+                const question = assessmentQuestions[currentQuestion];
+                
+                document.getElementById('questionText').textContent = question.text;
+                document.getElementById('questionDescription').textContent = question.description;
+                
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = question.options.map((option, index) => `
+                    <button class="option-button w-full p-4 rounded-lg text-left transition-colors" data-value="${option.value}">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 rounded-full mr-3 flex-shrink-0"></div>
+                            <span>${option.text}</span>
+                        </div>
+                    </button>
+                `).join('');
+                
+                // Add click listeners to options
+                optionsContainer.querySelectorAll('.option-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.selectOption(e.currentTarget);
+                    });
+                });
+                
+                // Update progress
+                const progress = ((currentQuestion + 1) / assessmentQuestions.length) * 100;
+                document.getElementById('progressBar').style.setProperty('--progress', `${progress}%`);
+                document.getElementById('progressText').textContent = `${currentQuestion + 1} / ${assessmentQuestions.length}`;
+                
+                // Update navigation buttons
+                document.getElementById('prevQuestion').disabled = currentQuestion === 0;
+                document.getElementById('nextQuestion').disabled = true;
+                
+                // Restore previous answer if exists
+                if (answers[question.id]) {
+                    const selectedButton = optionsContainer.querySelector(`[data-value="${answers[question.id]}"]`);
+                    if (selectedButton) {
+                        this.selectOption(selectedButton);
+                    }
+                }
+            }
+            
+            selectOption(button) {
+                // Remove previous selection
+                document.querySelectorAll('.option-button').forEach(btn => {
+                    btn.classList.remove('selected');
+                    btn.querySelector('.w-6').style.backgroundColor = '';
+                });
+                
+                // Select current option
+                button.classList.add('selected');
+                button.querySelector('.w-6').style.backgroundColor = '#f59e0b';
+                
+                // Store answer
+                const value = parseInt(button.dataset.value);
+                answers[assessmentQuestions[currentQuestion].id] = value;
+                
+                // Enable next button
+                document.getElementById('nextQuestion').disabled = false;
+            }
+            
+            nextQuestion() {
+                if (currentQuestion < assessmentQuestions.length - 1) {
+                    currentQuestion++;
+                    this.showQuestion();
+                } else {
+                    this.showResults();
+                }
+            }
+            
+            prevQuestion() {
+                if (currentQuestion > 0) {
+                    currentQuestion--;
+                    this.showQuestion();
+                }
+            }
+            
+            calculateResults() {
+                const capacityScores = {};
+                
+                // Initialize scores
+                Object.keys(capacityNames).forEach(capacity => {
+                    capacityScores[capacity] = { total: 0, count: 0 };
+                });
+                
+                // Calculate scores
+                assessmentQuestions.forEach(question => {
+                    const answer = answers[question.id];
+                    if (answer !== undefined) {
+                        capacityScores[question.capacity].total += answer;
+                        capacityScores[question.capacity].count += 1;
+                    }
+                });
+                
+                // Calculate averages and percentages
+                const results = {};
+                Object.keys(capacityScores).forEach(capacity => {
+                    const score = capacityScores[capacity];
+                    const average = score.count > 0 ? score.total / score.count : 0;
+                    const percentage = (average / 5) * 100;
+                    results[capacity] = {
+                        score: average,
+                        percentage: percentage,
+                        level: this.getLevel(percentage)
+                    };
+                });
+                
+                return results;
+            }
+            
+            getLevel(percentage) {
+                if (percentage >= 80) return { name: 'Advanced', color: '#10b981' };
+                if (percentage >= 60) return { name: 'Proficient', color: '#3b82f6' };
+                if (percentage >= 40) return { name: 'Developing', color: '#f59e0b' };
+                return { name: 'Emerging', color: '#ef4444' };
+            }
+            
+            showResults() {
+                const results = this.calculateResults();
+                
+                document.getElementById('questionCard').classList.add('hidden');
+                document.getElementById('assessmentProgress').classList.add('hidden');
+                document.getElementById('assessmentResults').classList.remove('hidden');
+                
+                this.createRadarChart(results);
+                this.showDetailedResults(results);
+            }
+            
+            createRadarChart(results) {
+                const chartDom = document.getElementById('radarChart');
+                const myChart = echarts.init(chartDom);
+                
+                const data = Object.keys(results).map(capacity => ({
+                    name: capacityNames[capacity],
+                    value: results[capacity].percentage
+                }));
+                
+                const option = {
+                    backgroundColor: 'transparent',
+                    radar: {
+                        indicator: data.map(item => ({
+                            name: item.name,
+                            max: 100
+                        })),
+                        radius: '70%',
+                        axisName: {
+                            color: getComputedStyle(document.body).getPropertyValue('--text-primary') || '#1a1a1a'
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: getComputedStyle(document.body).getPropertyValue('--card-border') || '#e5e7eb'
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: getComputedStyle(document.body).getPropertyValue('--card-border') || '#e5e7eb'
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'radar',
+                        data: [{
+                            value: data.map(item => item.value),
+                            areaStyle: {
+                                color: 'rgba(245, 158, 11, 0.2)'
+                            },
+                            lineStyle: {
+                                color: '#f59e0b',
+                                width: 2
+                            },
+                            itemStyle: {
+                                color: '#f59e0b'
+                            }
+                        }]
+                    }]
+                };
+                
+                myChart.setOption(option);
+                
+                // Handle theme changes
+                window.addEventListener('themeChanged', () => {
+                    myChart.setOption(option);
+                });
+            }
+            
+            showDetailedResults(results) {
+                const container = document.getElementById('detailedResults');
+                container.innerHTML = Object.keys(results).map(capacity => {
+                    const result = results[capacity];
+                    return `
+                        <div class="assessment-card rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-display text-lg font-semibold">${capacityNames[capacity]}</h4>
+                                <span class="px-3 py-1 rounded-full text-sm font-medium" style="background-color: ${result.level.color}20; color: ${result.level.color};">
+                                    ${result.level.name}
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Score: ${result.score.toFixed(1)} / 5.0</span>
+                                    <span>${result.percentage.toFixed(0)}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="h-2 rounded-full" style="width: ${result.percentage}%; background-color: ${result.level.color};"></div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                ${this.getCapacityDescription(capacity, result.level.name)}
+                            </p>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            getCapacityDescription(capacity, level) {
+                const descriptions = {
+                    'self-regulation': {
+                        'Advanced': 'You demonstrate exceptional emotional control and can maintain composure in the most challenging situations.',
+                        'Proficient': 'You generally manage your emotions well and can stay focused under pressure.',
+                        'Developing': 'You\'re building your ability to regulate emotions but sometimes struggle in high-stress situations.',
+                        'Emerging': 'Focus on developing awareness of your emotional patterns and practice calming techniques.'
+                    },
+                    'sense-making': {
+                        'Advanced': 'You excel at understanding complex situations and creating clear mental models.',
+                        'Proficient': 'You can usually make sense of complex information and identify key patterns.',
+                        'Developing': 'You\'re learning to organize complex information but sometimes miss important connections.',
+                        'Emerging': 'Practice breaking down complex problems and looking for underlying patterns.'
+                    },
+                    'critical-thinking': {
+                        'Advanced': 'You rigorously evaluate information and consistently avoid cognitive biases.',
+                        'Proficient': 'You usually think critically and can identify most logical fallacies.',
+                        'Developing': 'You\'re learning to question assumptions but sometimes accept information at face value.',
+                        'Emerging': 'Focus on asking more questions and seeking evidence before accepting claims.'
+                    },
+                    'objectivity': {
+                        'Advanced': 'You consistently set aside personal bias and follow evidence wherever it leads.',
+                        'Proficient': 'You generally maintain objectivity but occasionally struggle with confirmation bias.',
+                        'Developing': 'You\'re learning to recognize your biases but sometimes let them influence your judgment.',
+                        'Emerging': 'Practice actively looking for evidence that contradicts your beliefs.'
+                    },
+                    'fairness': {
+                        'Advanced': 'You consistently apply impartial standards and balance multiple perspectives expertly.',
+                        'Proficient': 'You usually make fair decisions and consider others\' viewpoints.',
+                        'Developing': 'You\'re learning to be more impartial but sometimes show favoritism.',
+                        'Emerging': 'Focus on applying consistent standards and considering perspectives different from your own.'
+                    },
+                    'self-reflection': {
+                        'Advanced': 'You have deep self-awareness and consistently learn from your experiences.',
+                        'Proficient': 'You regularly reflect on your behavior and can identify your patterns.',
+                        'Developing': 'You\'re building self-awareness but sometimes struggle to see your blind spots.',
+                        'Emerging': 'Start a daily reflection practice and seek feedback from others.'
+                    },
+                    'self-efficacy': {
+                        'Advanced': 'You have strong confidence in your abilities, grounded in proven competence.',
+                        'Proficient': 'You generally believe in your ability to learn and adapt to new challenges.',
+                        'Developing': 'You\'re building confidence but sometimes doubt your capabilities.',
+                        'Emerging': 'Focus on celebrating small wins and building evidence of your competence.'
+                    },
+                    'self-discipline': {
+                        'Advanced': 'You consistently align your actions with your long-term goals, even under pressure.',
+                        'Proficient': 'You usually maintain focus on important goals and resist most distractions.',
+                        'Developing': 'You\'re learning to prioritize effectively but sometimes give in to temptations.',
+                        'Emerging': 'Start with small commitments and gradually build your discipline muscle.'
+                    },
+                    'temperance': {
+                        'Advanced': 'You optimally allocate your resources and rarely waste effort on low-value activities.',
+                        'Proficient': 'You generally make good choices about where to invest your time and energy.',
+                        'Developing': 'You\'re learning to prioritize but sometimes get caught up in urgent but unimportant tasks.',
+                        'Emerging': 'Focus on identifying your highest-impact activities and protecting time for them.'
+                    },
+                    'perseverance': {
+                        'Advanced': 'You persist through the most difficult challenges when pursuing valued goals.',
+                        'Proficient': 'You generally maintain effort toward important objectives despite obstacles.',
+                        'Developing': 'You\'re learning to persist but sometimes give up when challenges seem too great.',
+                        'Emerging': 'Focus on connecting with your deeper motivations and breaking large goals into smaller steps.'
+                    }
+                };
+                
+                return descriptions[capacity][level] || 'Continue developing this capacity through deliberate practice.';
+            }
+            
+            retakeAssessment() {
+                document.getElementById('assessmentResults').classList.add('hidden');
+                document.getElementById('assessmentStart').classList.remove('hidden');
+                assessmentStarted = false;
+                currentQuestion = 0;
+                answers = {};
+            }
+            
+            setupEventListeners() {
+                document.getElementById('startAssessment').addEventListener('click', () => {
+                    this.startAssessment();
+                });
+                
+                document.getElementById('nextQuestion').addEventListener('click', () => {
+                    this.nextQuestion();
+                });
+                
+                document.getElementById('prevQuestion').addEventListener('click', () => {
+                    this.prevQuestion();
+                });
+                
+                document.getElementById('retakeAssessment').addEventListener('click', () => {
+                    this.retakeAssessment();
+                });
+            }
+        }
+
+        // Network Visualization
+        class NetworkVisualization {
+            constructor() {
+                this.createNetworkChart();
+            }
+            
+            createNetworkChart() {
+                const chartDom = document.getElementById('networkChart');
+                const myChart = echarts.init(chartDom);
+                
+                const nodes = [
+                    { name: 'Self-Regulation', category: 0, symbolSize: 50 },
+                    { name: 'Sense-Making', category: 1, symbolSize: 50 },
+                    { name: 'Critical Thinking', category: 1, symbolSize: 50 },
+                    { name: 'Objectivity', category: 2, symbolSize: 50 },
+                    { name: 'Fairness', category: 2, symbolSize: 50 },
+                    { name: 'Self-Reflection', category: 0, symbolSize: 50 },
+                    { name: 'Self-Efficacy', category: 0, symbolSize: 50 },
+                    { name: 'Self-Discipline', category: 0, symbolSize: 50 },
+                    { name: 'Temperance', category: 0, symbolSize: 50 },
+                    { name: 'Perseverance', category: 0, symbolSize: 50 }
+                ];
+                
+                const links = [
+                    { source: 'Self-Regulation', target: 'Self-Discipline' },
+                    { source: 'Self-Regulation', target: 'Self-Reflection' },
+                    { source: 'Sense-Making', target: 'Critical Thinking' },
+                    { source: 'Critical Thinking', target: 'Objectivity' },
+                    { source: 'Objectivity', target: 'Fairness' },
+                    { source: 'Self-Reflection', target: 'Self-Efficacy' },
+                    { source: 'Self-Efficacy', target: 'Perseverance' },
+                    { source: 'Self-Discipline', target: 'Temperance' },
+                    { source: 'Temperance', target: 'Perseverance' },
+                    { source: 'Sense-Making', target: 'Self-Reflection' }
+                ];
+                
+                const categories = [
+                    { name: 'Self-Management' },
+                    { name: 'Cognitive Processing' },
+                    { name: 'Decision-Making' }
+                ];
+                
+                const option = {
+                    backgroundColor: 'transparent',
+                    tooltip: {},
+                    legend: {
+                        data: categories.map(c => c.name),
+                        textStyle: {
+                            color: getComputedStyle(document.body).getPropertyValue('--text-primary') || '#1a1a1a'
+                        }
+                    },
+                    series: [{
+                        type: 'graph',
+                        layout: 'force',
+                        data: nodes,
+                        links: links,
+                        categories: categories,
+                        roam: true,
+                        force: {
+                            repulsion: 100,
+                            gravity: 0.1,
+                            edgeLength: 100
+                        },
+                        label: {
+                            show: true,
+                            position: 'inside',
+                            fontSize: 10,
+                            color: '#ffffff'
+                        },
+                        itemStyle: {
+                            borderColor: '#f59e0b',
+                            borderWidth: 2
+                        },
+                        lineStyle: {
+                            color: '#f59e0b',
+                            width: 2,
+                            opacity: 0.6
+                        },
+                        emphasis: {
+                            focus: 'adjacency',
+                            lineStyle: {
+                                width: 4
+                            }
+                        }
+                    }]
+                };
+                
+                myChart.setOption(option);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeManager = new ThemeManager();
+            const assessmentManager = new AssessmentManager();
+            const networkVisualization = new NetworkVisualization();
+            
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
