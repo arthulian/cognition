@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Capacities</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --text-primary: #ffffff;
+            --accent: #f59e0b;
+            --card-bg: #1a1a1a;
+            --card-border: #333333;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .skill-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 2.5rem 1.5rem;
+            border-radius: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 200px;
+        }
+
+        .skill-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.2);
+        }
+
+        #skillModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-content {
+            background: #111;
+            border: 1px solid #444;
+            max-width: 650px;
+            width: 100%;
+            padding: 3rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <nav class="sticky top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div style="background:#f59e0b; width:30px; height:30px; border-radius:5px; color:black; font-weight:bold; display:flex; align-items:center; justify-content:center;">CC</div>
+            <span class="font-display text-xl font-bold">Cognitive Capacities</span>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-display font-bold mb-4 text-white">The Ten Essential Capacities</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto">Select a capacity to view its formal definition and cognitive function.</p>
+        </header>
+
+        <div id="skillsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-20">
+            <div class="skill-card" onclick="showModal(0)">
+                <h3 class="text-xl font-bold text-amber-500">Self-Regulation</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(1)">
+                <h3 class="text-xl font-bold text-amber-500">Sense-Making</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(2)">
+                <h3 class="text-xl font-bold text-amber-500">Critical Thinking</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(3)">
+                <h3 class="text-xl font-bold text-amber-500">Objectivity</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(4)">
+                <h3 class="text-xl font-bold text-amber-500">Fairness</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(5)">
+                <h3 class="text-xl font-bold text-amber-500">Self-Reflection</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(6)">
+                <h3 class="text-xl font-bold text-amber-500">Self-Efficacy</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(7)">
+                <h3 class="text-xl font-bold text-amber-500">Self-Discipline</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(8)">
+                <h3 class="text-xl font-bold text-amber-500">Temperance</h3>
+            </div>
+            <div class="skill-card" onclick="showModal(9)">
+                <h3 class="text-xl font-bold text-amber-500">Perseverance</h3>
+            </div>
+        </div>
+    </main>
+
+    <div id="skillModal" onclick="this.style.display='none'">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 id="modalTitle" class="text-4xl font-display font-bold mb-6 text-amber-500"></h2>
+            <p id="modalBody" class="text-xl leading-relaxed text-gray-200"></p>
+            <button class="mt-10 bg-amber-500 text-black px-10 py-3 rounded-lg font-bold hover:bg-amber-600 transition-all" onclick="document.getElementById('skillModal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const skills = [
+            { title: "Self-Regulation", desc: "Manages impulses, attention, and emotions via a cycle of self-monitoring, analysis and self-adjusting." },
+            { title: "Sense-Making", desc: "Converts raw data into structured schemas by integrating metacognitive signals, addressing allocentric perspectives, reconciling discrepancies across inputs, and revising preconceptions, by exploring, reframing, and testing ideas." },
+            { title: "Critical Thinking", desc: "Evaluates assertions by estimating the prior plausibility of the proposition, assessing source reliability, distinguishing between claim, evidence and inference as separate justificatory layers, and evaluating logical validity and evidential relevance." },
+            { title: "Objectivity", desc: "Mitigates motivated reasoning by identifying uneven evidentiary standards, then uniformly applying empirical criteria (measurement and replication) and rational criteria (bayes-updating) to all conclusions, through impersonal rules and self-critique." },
+            { title: "Fairness", desc: "Maintains impartial balance by using an objective input–outcome ratio to weigh empathy relative to intent, against accountability relative to consequence." },
+            { title: "Self-Reflection", desc: "Causal attribution that involves separating personal choices from external circumstances, identifying recurring patterns and controllable levers of influence, and converting insights into action." },
+            { title: "Self-Efficacy", desc: "Grounds self-belief in past achievements, frames setbacks as temporary skill gaps rather than personal flaws, and periodically reassesses skills to pit subjective belief against objective competence." },
+            { title: "Self-Discipline", desc: "The establishment of priorities and the persistent implementation of goals, achieved by voluntarily inhibiting 'wants' to pursue 'shoulds' amid internal conflict, thus aligning behavior to long-term objectives." },
+            { title: "Temperance", desc: "Allocates effort according to strategic importance rather than sunk costs, minimizes unnecessary decision load or temptation exposure, and selects regulation strategies that preserve resources for highest priorities." },
+            { title: "Perseverance", desc: "Goal-directed persistence of action, through the overriding of avoidance urges, committing to valued outcomes, and utilizing gradual exposure and skill-development to reduce fear-driven withdrawal." }
+        ];
+
+        function showModal(index) {
+            document.getElementById('modalTitle').innerText = skills[index].title;
+            document.getElementById('modalBody').innerText = skills[index].desc;
+            document.getElementById('skillModal').style.display = 'flex';
+        }
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('canvas-container');
+        }
+
+        function draw() {
+            background(10, 10, 10, 20);
+            stroke(245, 158, 11, 30);
+            noFill();
+            for (let i = 0; i < 3; i++) {
+                bezier(width/2, height/2, random(width), random(height), random(width), random(height), mouseX, mouseY);
+            }
+        }
+
+        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+    </script>
+</body>
+</html>
